@@ -1,10 +1,15 @@
+// Pour protéger les informations de connexion vers la BDD
 require('dotenv').config()
+
+// Pour créer des applis web avec Node
 const express = require('express')
+
+// Je fais appel au module Express avec sa fonction
 const app = express()
 const cors = require('cors')
 const port = 3000
 
-// Important for connecting to Database
+// Importation to connect to Database
 require("./mongo")
 
 // Importation controllers for creating new users

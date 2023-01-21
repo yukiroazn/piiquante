@@ -40,12 +40,12 @@ const passwordOk = await bcrypt.compare(password, user.password)
 
 // Si c'est différent
 if (!passwordOk) {
-return res.status(403).send({ message: "Incorrect Password" })
+res.status(403).send({ message: "Incorrect Password"})
 }
 
 // Si c'est correct
 if (passwordOk) {
-return res.status(200).send({ message: "User Logged In"})
+res.status(200).send({ message: "User Logged In"})
 }
 }
 
