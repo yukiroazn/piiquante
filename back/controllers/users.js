@@ -31,25 +31,28 @@ const email = req.body.email
 const password = req.body.password
 const user = await User.findOne({ email: email })
 
- // On compare les entrées et les données
+// On compare les entrées et les données
+if (!user) {
+res.status(403).send({ message: "Incorrect email or password" })
+return
+}
+  
+// Si le mot de passe est correct
 const passwordOk = await bcrypt.compare(password, user.password)
-
-// Si c'est différent
+  
 if (!passwordOk) {
-res.status(403).send({ message: "Incorrect Password"})
-}     
-const token = createToken(email)
-res.status(200).send({ userId: user?._id, token: token})
+// Si c'est différent
+res.status(403).send({ message: "Incorrect email or password" })
+return
+}
+  
+// je crée et j'envoie le token si le mot de passe est correct
+const token = jwt.sign({ email: email }, `${process.env.JWT_PASSWORD}`, {expiresIn: "24h"})
+res.status(200).send({ userId: user?._id, token: token })
 } catch (err) {
-    console.error(err)
+console.error(err)
 res.status(500).send({ message: "Error" })
 }
 }
-
-function createToken(email){
-const jwtPassword = process.env.JWT_PASSWORD
-return jwt.sign({ email: email }, `${jwtPassword}`, {expiresIn: "24h"})
-}
-
 
 module.exports = { createUser, logUser }

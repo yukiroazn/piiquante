@@ -17,7 +17,6 @@ usersDisliked : [String],
 
 const Product = mongoose.model("Product", productSchema)
 
-
 // Create Sauce /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function createSauce(req, res) {
 const { body, file } = req
@@ -132,41 +131,64 @@ return req.protocol + "://" + req.get("host") + "/images/" + filename
 
 // Like and Dislike ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function likeSauce(req, res) {
-const { id } = req.params;
-const { userId } = req.body;
+const { id } = req.params; // Get the sauce ID from the request parameters
+const { userId } = req.body; // Get the user ID from the request body
   
+// Find the sauce with the given ID
 Product.findById(id)
-.then((sauce) => {
-if (!sauce) {
-return res.status(404).send({ message: "Product not found" })
-}
+.then(sauce => {
+
+// If the sauce does not exist, return an error response
+if (!sauce) return res.status(404).send({ message: "Product not found" })
   
+// Check if the user has already liked or disliked the sauce
 const userAlreadyLiked = sauce.usersLiked.includes(userId)
 const userAlreadyDisliked = sauce.usersDisliked.includes(userId)
   
+// If the user has not liked or disliked the sauce yet, add a like
 if (!userAlreadyLiked && !userAlreadyDisliked) {
-// If user has not liked or disliked the sauce yet
-sauce.likes += 1;
-sauce.usersLiked.push(userId);
-sauce.save();
-res.status(200).send({ message: "Product liked" })
-} else if (userAlreadyLiked) {
-// If user already liked the sauce, remove like
-sauce.likes -= 1;
-sauce.usersLiked = sauce.usersLiked.filter((uid) => uid !== userId)
-sauce.save();
-res.status(200).send({ message: "Like removed" })
-} else if (userAlreadyDisliked) {
-// If user already disliked the sauce, "change to like"
-sauce.likes += 1;
-sauce.dislikes -= 1;
-sauce.usersLiked.push(userId);
-sauce.usersDisliked = sauce.usersDisliked.filter((uid) => uid !== userId)
-sauce.save();
+if (req.body.like === 1) {
+sauce.likes += 1
+sauce.usersLiked.push(userId)
+} else if (req.body.like === -1) {
+sauce.dislikes += 1
+sauce.usersDisliked.push(userId)
+}
+sauce.save()
+res.status(200).send({ message: "Product liked/disliked" })
+}
+
+// If the user has already liked the sauce, remove the like
+else if (userAlreadyLiked) {
+if (req.body.like === 0) {
+sauce.likes -= 1
+sauce.usersLiked = sauce.usersLiked.filter(uid => uid !== userId)
+} else if (req.body.like === -1) {
+sauce.likes -= 1
+sauce.dislikes += 1
+sauce.usersLiked = sauce.usersLiked.filter(uid => uid !== userId)
+sauce.usersDisliked.push(userId)
+}
+sauce.save()
+res.status(200).send({ message: "Like removed/disliked" })
+}
+
+// If the user has already disliked the sauce, change to a like
+else if (userAlreadyDisliked) {
+if (req.body.like === 0) {
+sauce.dislikes -= 1
+sauce.usersDisliked = sauce.usersDisliked.filter(uid => uid !== userId)
+} else if (req.body.like === 1) {
+sauce.likes += 1
+sauce.dislikes -= 1
+sauce.usersDisliked = sauce.usersDisliked.filter(uid => uid !== userId)
+sauce.usersLiked.push(userId)
+}
+sauce.save()
 res.status(200).send({ message: "Like changed" })
 }
 })
-.catch((err) => {
+.catch(err => {
 console.error(err);
 res.status(500).send({ message: "Error" })
 })
