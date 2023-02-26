@@ -1,29 +1,16 @@
-const mongoose = require("mongoose")
+// J'importe les npm nécessaires 
+const { Product } = require('../models/sauce')
+// FS veut dire file-system, c'est ce qui nous permet de modifier et supprimer un fichier
 const fs = require('fs');
-
-const productSchema = new mongoose.Schema({
-userId : String,
-name : String,
-manufacturer : String,
-description : String,
-mainPepper : String,
-imageUrl : String,
-heat : Number,
-likes : Number,
-dislikes : Number,
-usersLiked : [String],
-usersDisliked : [String],
-})
-
-const Product = mongoose.model("Product", productSchema)
 
 // Create Sauce /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function createSauce(req, res) {
 const { body, file } = req
 const { filename } = file
-const sauce = JSON.parse(body.sauce)
+const sauce = JSON.parse(body.sauce) // Body parsé en objet js utilisable
 const { name,manufacturer, description, mainPepper, heat, userId } = sauce
 
+// On récupère toutes les infos du body
 const product = new Product({
 userId: userId,
 name: name,
@@ -38,7 +25,7 @@ usersLiked : [],
 usersDisliked : [],
 })
 
-product.save().
+product.save(). // sauvegarder la sauce dans la BDD
 then((message) => {
 res.send({message: message});
 return console.log("Product saved", message)}).catch(console.error)
@@ -56,7 +43,7 @@ res.status(500).send({ message: "Internal server error" });
 
 // Clickable Sauce //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function getSauceById(req, res) {
-const { id } = req.params
+const { id } = req.params // On trouve la sauce concernée par son id
 Product.findById(id)
 .then(product => res.send(product))
 .catch(console.error)
@@ -64,7 +51,7 @@ Product.findById(id)
 
 // Function to delete a file path //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function deleteFile(filePath) {
-fs.unlink(filePath, (err) => {
+fs.unlink(filePath, (err) => { // Fonction pour supprimer l'image dans le système
 if (err) {
 console.error(err);
 } else {
@@ -80,8 +67,9 @@ Product.findByIdAndDelete(id)
 .then((product) => {
 // Delete image at the same time when deleting a sauce
 if (product.imageUrl) {
-const imagePath = product.imageUrl.split('/').pop();
-deleteFile(`images/${imagePath}`);
+const imagePath = product.imageUrl.split('/').pop(); // Récupérer l'imageUrl retournée par la BDD, stockée dans /images/
+// Qu'on peut faire un split vu qu'elle est entre deux chemins donc split va séparer entre éléments //
+deleteFile(`images/${imagePath}`);  // On supprime le lien entre l'ancienne image et la sauce en question
 }
 res.send({ message: product });
 })
@@ -90,16 +78,17 @@ res.send({ message: product });
 
 // Modify Sauce ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function modifySauce (req, res) {
-const {params: {id} } = req;
-const hasNewImage = req.file != null;
+const {params: {id} } = req; // On trouve la sauce concernée par son id
+const hasNewImage = req.file != null; // Si la request concerne le changement du file, donc l'image
 const payload = makePayload(hasNewImage, req);
   
 Product.findByIdAndUpdate(id, payload)
 .then((dbResponse) => {
 // Delete old image if it existed when uploading a new iimage
 if (hasNewImage && dbResponse.imageUrl) {
-const oldImagePath = dbResponse.imageUrl.split('/').pop();
-deleteFile(`images/${oldImagePath}`);
+const oldImagePath = dbResponse.imageUrl.split('/').pop(); // Récupérer l'imageUrl retournée par la BDD, stockée dans /images/
+// Qu'on peut faire un split vu qu'elle est entre deux chemins donc split va séparer entre éléments //
+deleteFile(`images/${oldImagePath}`); // On met à jour la sauce avec la nouvelle image
 }
 sendClientResponse(dbResponse, res);
 })
@@ -110,7 +99,7 @@ function makePayload(hasNewImage, req) {
 console.log("hasNewImage", hasNewImage)
 if (!hasNewImage) return req.body
 const payload = JSON.parse(req.body.sauce)
-payload.imageUrl = makeImageUrl(req, req.file.filename)
+payload.imageUrl = makeImageUrl(req, req.file.filename)  // On met à jour le reste du <body>
 console.log("New image")
 console.log("New body", req.body.sauce)
 return payload
@@ -131,6 +120,7 @@ return req.protocol + "://" + req.get("host") + "/images/" + filename
 
 // Like and Dislike ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function likeSauce(req, res) {
+// On récupère l'id du user, l'id de la sauce et le like
 const { id } = req.params; // Get the sauce ID from the request parameters
 const { userId } = req.body; // Get the user ID from the request body
   

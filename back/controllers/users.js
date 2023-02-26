@@ -1,6 +1,6 @@
-const User = require("../mongo").User
-const bcrypt = require('bcrypt')
-const jwt = require("jsonwebtoken")
+const User = require("../models/users").User // J'importe les npm nécessaires
+const bcrypt = require('bcrypt') // Crypter les informations
+const jwt = require("jsonwebtoken") // CCréer des token aléatoires uniques et sécuriser pour la connexion au compte
 
 // Créer un nouvel utilisateur
 // Hash le password quand l'utilisateur le crée
@@ -55,4 +55,5 @@ res.status(500).send({ message: "Error" })
 }
 }
 
+// J'exporte les modules
 module.exports = { createUser, logUser }
