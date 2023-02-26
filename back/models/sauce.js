@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose') // J'importe les npm nécessaires
 
 // Le modèle schema pour les infos sur la sauce
 const productSchema = new mongoose.Schema({

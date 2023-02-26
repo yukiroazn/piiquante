@@ -145,7 +145,7 @@ sauce.dislikes += 1
 sauce.usersDisliked.push(userId)
 }
 sauce.save()
-res.status(200).send({ message: "Product liked/disliked" })
+res.status(200).send({ message: "Sauce liked/disliked" })
 }
 
 // If the user has already liked the sauce, remove the like
