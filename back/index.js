@@ -1,6 +1,6 @@
 const { app, express } = require("./server"); // Pour créer des applis web avec Node
 const helmet = require('helmet'); // Pour sécuriser les en-tête http de l'application express
-const port = 3000;
+const port = 3000; // Localhost
 const path = require("path"); // Pour pouvoir travailler avec les chemins des fichiers
 
 // Connection to Database

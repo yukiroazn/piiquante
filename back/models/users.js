@@ -1,6 +1,6 @@
 // Pour faciliter les interactions avec la BDD MongoDB
 const mongoose = require('mongoose');
-const uniqueValidator = require("mongoose-unique-validator")
+const uniqueValidator = require("mongoose-unique-validator") // Pour réfuser de créer un compte avec le même email
 
 const password = process.env.DB_PASS
 const username = process.env.DB_USER

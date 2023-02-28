@@ -1,4 +1,4 @@
-const jwt = require("jsonwebtoken") // CCréer des token aléatoires uniques et sécuriser pour la connexion au compte
+const jwt = require("jsonwebtoken") // Créer des token aléatoires uniques et sécuriser pour la connexion au compte
 require("dotenv").config() // Pour protéger les informations de connexion vers la BDD
 
 function auth(req, res, next) {
