@@ -1,5 +1,5 @@
-// Pour faciliter les interactions avec la BDD MongoDB
-const mongoose = require('mongoose');
+require('dotenv').config() // Pour protéger les informations de connexion vers la BDD
+const mongoose = require('mongoose'); // Pour faciliter les interactions avec la BDD MongoDB
 const uniqueValidator = require("mongoose-unique-validator") // Pour réfuser de créer un compte avec le même email
 
 const password = process.env.DB_PASS

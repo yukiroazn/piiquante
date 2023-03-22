@@ -1,3 +1,4 @@
+require('dotenv').config() // Pour protéger les informations de connexion vers la BDD
 const User = require("../models/users").User // J'importe les npm nécessaires
 const bcrypt = require('bcrypt') // Crypter les informations
 const jwt = require("jsonwebtoken") // Créer des token aléatoires uniques et sécuriser pour la connexion au compte

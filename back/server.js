@@ -1,6 +1,3 @@
-// Pour protéger les informations de connexion vers la BDD
-require('dotenv').config()
-
 // Pour créer des applis web avec Node
 const express = require('express')
 
