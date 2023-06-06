@@ -105,7 +105,7 @@ console.log("New body", req.body.sauce)
 return payload
 }
 
-// This function work if all objects are deleted manually to MongoDB, this messasge error will appear in browser payload ///////////////////////////////////////////
+// This function work if all objects are deleted manually to MongoDB, this message error will appear in browser payload ///////////////////////////////////////////
 // function sends a response to the client after a product is modified. It checks if the product exists and sends an appropriate response message to the client/////
 function sendClientResponse(product, res) {
 if (product == null) {
