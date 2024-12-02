@@ -134,7 +134,10 @@ if (!sauce) return res.status(404).send({ message: "Product not found" })
 // Check if the user has already liked or disliked the sauce
 const userAlreadyLiked = sauce.usersLiked.includes(userId)
 const userAlreadyDisliked = sauce.usersDisliked.includes(userId)
-  
+ 
+
+
+// Case 1
 // If the user has not liked or disliked the sauce yet, add a like
 if (!userAlreadyLiked && !userAlreadyDisliked) {
 if (req.body.like === 1) {
@@ -148,6 +151,8 @@ sauce.save()
 res.status(200).send({ message: "Sauce liked/disliked" })
 }
 
+
+// Case 2
 // If the user has already liked the sauce, remove the like
 else if (userAlreadyLiked) {
 if (req.body.like === 0) {
@@ -163,6 +168,8 @@ sauce.save()
 res.status(200).send({ message: "Like removed/disliked" })
 }
 
+
+// Case 3
 // If the user has already disliked the sauce, change to a like
 else if (userAlreadyDisliked) {
 if (req.body.like === 0) {
